@@ -4,7 +4,7 @@ import java.io.InputStreamReader;
 import java.util.*;
 
 
-public class BOJ_15652 {
+public class BOJ_9663 {
     static int N,answer;
     static int[] chessPane;
     static int cnt;
