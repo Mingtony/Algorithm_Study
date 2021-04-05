@@ -3,50 +3,54 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.*;
 public class BOJ_1325{
-    static int N,M, max = Integer.MIN_VALUE;
-    static ArrayList<Integer> trust[];
+    static int N,M, cc,max = Integer.MIN_VALUE;
+    static HashMap<Integer, ArrayList<Integer>> trust;
     static boolean[] visited;
     static int[] cnt;
+    static int BFS(int idx){
+        Queue<Integer> queue = new LinkedList<>();
+        visited = new boolean[N+1];
+        queue.add(idx);
+        visited[idx] = true;
+        while(!queue.isEmpty()){
+            int tmp = queue.poll();
+            ArrayList<Integer> list = trust.get(tmp);
+            for(int n : list){
+                if(!visited[n]){
+                    visited[n] = true;
+                    cnt[idx]++;
+                    queue.add(n);
+                }
+            }
+        }
+        return cnt[idx];
+    }
     public static void main(String[] args) throws IOException {
         // TODO Auto-generated method stub
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringBuilder sb = new StringBuilder();
         StringTokenizer st = new StringTokenizer(br.readLine());
-        Queue<Integer> queue = new LinkedList<>();
 
         N = Integer.parseInt(st.nextToken());
         M = Integer.parseInt(st.nextToken());
-        trust = new ArrayList[N+1];
+        trust = new HashMap<>();
         cnt = new int[N+1];
         for(int i=1;i<=N;i++)
-            trust[i] = new ArrayList<>();
+            trust.put(i,new ArrayList<>());
         for(int i=0;i<M;i++){
             st = new StringTokenizer(br.readLine());
             int A = Integer.parseInt(st.nextToken());
             int B = Integer.parseInt(st.nextToken());
-            trust[A].add(B);
+            trust.get(B).add(A);
         }
+
         //계산
         for(int i=1;i<=N;i++){
-            queue.add(i);
-            visited = new boolean[N+1];
-            visited[i] = true;
-            while(!queue.isEmpty()){
-                int tmp = queue.poll();
-                for(int j=0;j<trust[tmp].size();j++){
-                    if(!visited[trust[tmp].get(j)]){
-                        visited[trust[tmp].get(j)] = true;
-                        queue.add(trust[tmp].get(j));
-                        cnt[trust[tmp].get(j)]++;
-                    }
-                }
-            }
+            int n = BFS(i);
+            max = max < n ? n : max;
         }
         for(int i=1;i<=N;i++){
-            max = cnt[i] > max ? cnt[i] : max;
-        }
-        for(int i=1;i<=N;i++){
-            if(cnt[i]==max)
+            if(max == cnt[i])
                 sb.append(i+" ");
         }
         System.out.println(sb);
